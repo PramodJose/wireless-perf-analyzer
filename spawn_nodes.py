@@ -138,6 +138,8 @@ if __name__ == "__main__":
     # the intermediate file has an underscore at the end; which we will delete at the very end.
 
     out_fh = open(options.outfile, "w")
+    out_fh.write("#\n#\tOffset co-ordinates: (" + str(options.offx) + ", " + str(options.offy) + ")\n")
+    out_fh.write("#\tIndex offset: " + str(options.off_index) + "\n#\n\n")
     out_fh.write("# Creating the nodes first...\n")
     out_fh.write("for {set i 0} {$i < " + str(options.num_nodes) + "} {incr i} {\n")
     out_fh.write("\tset index [expr {" + str(options.off_index) + " + $i}]\n")
@@ -180,4 +182,3 @@ if __name__ == "__main__":
     out_fh.write("\t$ns_ at 0.0 \"$tcp_($index) start\"\n}\n")
 
     out_fh.close()
-
