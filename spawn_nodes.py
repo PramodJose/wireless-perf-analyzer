@@ -134,7 +134,7 @@ if __name__ == "__main__":
 
     command = "setdest -v 1 -n " + str(options.num_nodes - 1) + " -p " + options.pause_time + \
               " -M " + options.max_speed + " -t " + options.sim_time + " -x " + options.maxx + \
-              " -y " + options.maxy + " >> " + options.outfile + "_"
+              " -y " + options.maxy + " > " + options.outfile + "_"
     # the intermediate file has an underscore at the end; which we will delete at the very end.
 
     out_fh = open(options.outfile, "w")
@@ -161,6 +161,8 @@ if __name__ == "__main__":
     out_fh.write("\n# Creating the Access Point (AP)..\n")
     out_fh.write("$node_(" + AP_index + ") set X_ " + str(center_x) + "\n")
     out_fh.write("$node_(" + AP_index + ") set Y_ " + str(center_y) + "\n")
+    out_fh.write("$node_(" + AP_index + ") set Z_ 0.0\n")
+
 
     out_fh.write("\n# Setting initial positions of the nodes; i.e. displaying them on nam\n")
     out_fh.write("for {set i 0} {$i < " + str(options.num_nodes) + "} {incr i} {\n")
@@ -170,7 +172,7 @@ if __name__ == "__main__":
     out_fh.write("\n# Creating a sink at the AP and connecting all nodes to the AP\n")
 
     out_fh.write("set sink_(" + AP_index + ") [new Agent/TCPSink]\n")
-    out_fh.write("$ns_ attach-agent $node_(" + AP_index + ") $sink\n\n")
+    out_fh.write("$ns_ attach-agent $node_(" + AP_index + ") $sink_(" + AP_index + ")\n\n")
 
     out_fh.write("for {set i 1} {$i < " + str(options.num_nodes) + "} {incr i} {\n")
     out_fh.write("\tset index [expr {" + AP_index + " + $i}]\n")
@@ -179,6 +181,6 @@ if __name__ == "__main__":
     out_fh.write("\t$ns_ connect $tcp_($index) $sink_(" + AP_index + ")\n")
     out_fh.write("\tset ftp_($index) [new Application/FTP]\n")
     out_fh.write("\t$ftp_($index) attach-agent $tcp_($index)\n")
-    out_fh.write("\t$ns_ at 0.0 \"$tcp_($index) start\"\n}\n")
+    out_fh.write("\t$ns_ at 0.0 \"$ftp_($index) start\"\n}\n")
 
     out_fh.close()
