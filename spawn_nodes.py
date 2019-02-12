@@ -169,16 +169,17 @@ if __name__ == "__main__":
     out_fh.write("\tset index [expr {" + AP_index + " + $i}]\n")
     out_fh.write("\t$ns_ initial_node_pos $node_($index) 20\n}\n")
 
-    out_fh.write("\n# Creating a sink at the AP and connecting all nodes to the AP\n")
-
-    out_fh.write("set sink_(" + AP_index + ") [new Agent/TCPSink]\n")
-    out_fh.write("$ns_ attach-agent $node_(" + AP_index + ") $sink_(" + AP_index + ")\n\n")
+    out_fh.write("\n# Creating sinks at the AP and connecting all nodes to the AP\n")
 
     out_fh.write("for {set i 1} {$i < " + str(options.num_nodes) + "} {incr i} {\n")
     out_fh.write("\tset index [expr {" + AP_index + " + $i}]\n")
+    out_fh.write("\tset sink_($index) [new Agent/TCPSink]\n")
+    out_fh.write("\t$ns_ attach-agent $node_(" + AP_index + ") $sink_($index)\n\n")
     out_fh.write("\tset tcp_($index) [new Agent/TCP]\n")
+    out_fh.write("\t$tcp_($index) set packetSize_ 4096\n")
+    out_fh.write("\t$tcp_($index) set interval_ 0.005\n")
     out_fh.write("\t$ns_ attach-agent $node_($index) $tcp_($index)\n")
-    out_fh.write("\t$ns_ connect $tcp_($index) $sink_(" + AP_index + ")\n")
+    out_fh.write("\t$ns_ connect $tcp_($index) $sink_($index)\n\n")
     out_fh.write("\tset ftp_($index) [new Application/FTP]\n")
     out_fh.write("\t$ftp_($index) attach-agent $tcp_($index)\n")
     out_fh.write("\t$ns_ at 0.0 \"$ftp_($index) start\"\n}\n")
