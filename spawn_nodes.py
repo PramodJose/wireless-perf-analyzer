@@ -93,26 +93,6 @@ def process_node(line, options, special=False):
     return mod_line
 
 
-def process_god(line, options):
-    spaces_to_first_change = 2      # constant; denotes the number of spaces after which
-                                    # the node index to modify is present
-
-    i = 0
-    spaces_count = 0
-    while spaces_count != spaces_to_first_change:
-        if line[i] == ' ':
-            spaces_count += 1
-        i += 1
-    mod_line = line[:i]     # copies till the space
-
-    numbers = line[i:].split()
-    mod_line += str(int(numbers[0]) + options.off_index) + " "
-    mod_line += str(int(numbers[1]) + options.off_index) + " "
-    mod_line += numbers[2] + "\n"
-
-    return mod_line
-
-
 def process_ns(line, options):
     i = 0
     while line[i] != "\"":
@@ -124,7 +104,7 @@ def process_ns(line, options):
     if line.startswith("$node_("):
         mod_line += process_node(line, options, True)
     elif line.startswith("$god_"):
-        mod_line += process_god(line, options)
+        mod_line = ""
     else:
         mod_line = mod_line + line
 
@@ -139,13 +119,14 @@ def transform_file(out_fh, options):
             if line.startswith("$node_("):
                 modified_line = process_node(line, options)
             elif line.startswith("$god_"):
-                modified_line = process_god(line, options)
+                modified_line = ""
             elif line.startswith("$ns_"):
                 modified_line = process_ns(line, options)
             else:
                 modified_line = line
 
-            out_fh.write(modified_line)
+            if modified_line != "":
+                out_fh.write(modified_line)
 
 
 if __name__ == "__main__":
@@ -153,12 +134,18 @@ if __name__ == "__main__":
 
     command = "setdest -v 1 -n " + str(options.num_nodes - 1) + " -p " + options.pause_time + \
               " -M " + options.max_speed + " -t " + options.sim_time + " -x " + options.maxx + \
-              " -y " + options.maxy + " > " + options.outfile + "_"
+              " -y " + options.maxy + " >> " + options.outfile + "_"
     # the intermediate file has an underscore at the end; which we will delete at the very end.
+
+    out_fh = open(options.outfile, "w")
+    out_fh.write("# Creating the nodes first...\n")
+    out_fh.write("for {set i 0} {$i < " + str(options.num_nodes) + "} {incr i} {\n")
+    out_fh.write("\tset index [expr {" + str(options.off_index) + " + $i}]\n")
+    out_fh.write("\tset node_($index) [$ns_ node]\n")
+    out_fh.write("\t$node_($index) random-motion 0\n}\n\n")
 
     os.system(command)
 
-    out_fh = open(options.outfile, "w")
     options.off_index += 1
     transform_file(out_fh, options)
     os.remove(options.outfile + "_")        # delete the intermediate file.
@@ -167,14 +154,30 @@ if __name__ == "__main__":
     center_x = int(options.maxx) // 2 + options.offx
     center_y = int(options.maxy) // 2 + options.offy
     options.off_index -= 1
+    AP_index = str(options.off_index)
 
-    out_fh.write("\n# Creating the Access Point..\n")
-    out_fh.write("$node_(" + str(options.off_index) + ") set X_ " + str(center_x) + "\n")
-    out_fh.write("$node_(" + str(options.off_index) + ") set Y_ " + str(center_y) + "\n")
+    out_fh.write("\n# Creating the Access Point (AP)..\n")
+    out_fh.write("$node_(" + AP_index + ") set X_ " + str(center_x) + "\n")
+    out_fh.write("$node_(" + AP_index + ") set Y_ " + str(center_y) + "\n")
 
     out_fh.write("\n# Setting initial positions of the nodes; i.e. displaying them on nam\n")
-    for i in range(options.num_nodes):
-        out_fh.write("$ns_ initial_node_pos $node_(" + str(options.off_index + i) + ") 20\n")
-        
+    out_fh.write("for {set i 0} {$i < " + str(options.num_nodes) + "} {incr i} {\n")
+    out_fh.write("\tset index [expr {" + AP_index + " + $i}]\n")
+    out_fh.write("\t$ns_ initial_node_pos $node_($index) 20\n}\n")
+
+    out_fh.write("\n# Creating a sink at the AP and connecting all nodes to the AP\n")
+
+    out_fh.write("set sink_(" + AP_index + ") [new Agent/TCPSink]\n")
+    out_fh.write("$ns_ attach-agent $node_(" + AP_index + ") $sink\n\n")
+
+    out_fh.write("for {set i 1} {$i < " + str(options.num_nodes) + "} {incr i} {\n")
+    out_fh.write("\tset index [expr {" + AP_index + " + $i}]\n")
+    out_fh.write("\tset tcp_($index) [new Agent/TCP]\n")
+    out_fh.write("\t$ns_ attach-agent $node_($index) $tcp_($index)\n")
+    out_fh.write("\t$ns_ connect $tcp_($index) $sink_(" + AP_index + ")\n")
+    out_fh.write("\tset ftp_($index) [new Application/FTP]\n")
+    out_fh.write("\t$ftp_($index) attach-agent $tcp_($index)\n")
+    out_fh.write("\t$ns_ at 0.0 \"$tcp_($index) start\"\n}\n")
+
     out_fh.close()
 
