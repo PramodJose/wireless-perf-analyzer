@@ -1,0 +1,88 @@
+#
+#	Offset co-ordinates: (150, 80)
+#	Index offset: 15
+#
+
+# Creating the nodes first...
+for {set i 0} {$i < 6} {incr i} {
+	set index [expr {15 + $i}]
+	set node_($index) [$ns_ node]
+	$node_($index) random-motion 0
+}
+
+#
+# nodes: 5, pause: 0.00, max speed: 20.00, max x: 400.00, max y: 300.00
+#
+$node_(16) set X_ 317.588915782630
+$node_(16) set Y_ 237.235320216265
+$node_(16) set Z_ 0.000000000000
+$node_(17) set X_ 336.111225539617
+$node_(17) set Y_ 205.270806242788
+$node_(17) set Z_ 0.000000000000
+$node_(18) set X_ 284.412552592766
+$node_(18) set Y_ 170.789057287416
+$node_(18) set Z_ 0.000000000000
+$node_(19) set X_ 327.179512487105
+$node_(19) set Y_ 376.452778755263
+$node_(19) set Z_ 0.000000000000
+$node_(20) set X_ 243.849167954323
+$node_(20) set Y_ 295.705266121471
+$node_(20) set Z_ 0.000000000000
+$ns_ at 0.000000000000 "$node_(16) setdest 388.816365058023 231.125715075561 7.724218411985"
+$ns_ at 0.000000000000 "$node_(17) setdest 424.401036807200 375.304052560414 16.345756272766"
+$ns_ at 0.000000000000 "$node_(18) setdest 421.213442369456 351.871691837281 14.622328617015"
+$ns_ at 0.000000000000 "$node_(19) setdest 518.429300336469 180.908913018427 15.976692639094"
+$ns_ at 0.000000000000 "$node_(20) setdest 375.162862342288 135.558696495418 14.357388565861"
+$ns_ at 9.255175602067 "$node_(16) setdest 486.203976611241 97.334541237351 10.083686969571"
+$ns_ at 11.721031999556 "$node_(17) setdest 307.667435052531 227.263023287689 15.611229605772"
+$ns_ at 14.424595143095 "$node_(20) setdest 426.738402145353 294.903051243125 2.026517466064"
+$ns_ at 15.520648343971 "$node_(18) setdest 326.802707830203 264.743428771997 9.480718703007"
+$ns_ at 17.120018236298 "$node_(19) setdest 435.211695852697 314.921422056774 16.991557202824"
+$ns_ at 23.797479484794 "$node_(17) setdest 390.250041329304 248.026051984499 0.226872290296"
+$ns_ at 25.666077846574 "$node_(16) setdest 505.697882265123 364.494882560087 1.051164520588"
+$ns_ at 26.403939999612 "$node_(19) setdest 353.412595090880 171.483008635339 19.394743515669"
+$ns_ at 29.071382739348 "$node_(18) setdest 336.791441136184 132.030019583703 19.391975112616"
+$ns_ at 34.917752019195 "$node_(19) setdest 290.244010642812 207.093112407105 5.939851965636"
+$ns_ at 35.934468153069 "$node_(18) setdest 476.544965692180 226.496371638785 17.517587124290"
+$ns_ at 45.563986070393 "$node_(18) setdest 433.332376306209 331.419858074591 7.891994738377"
+$ns_ at 47.125880881920 "$node_(19) setdest 428.396659415799 151.395724255198 17.843140408251"
+$ns_ at 55.474050112493 "$node_(19) setdest 257.933480490503 281.739747068348 14.995862929881"
+$ns_ at 59.942307264153 "$node_(18) setdest 498.850888796380 293.557433085504 9.096206410791"
+#
+# Destination Unreachables: 0
+#
+# Route Changes: 0
+#
+# Link Changes: 0
+#
+# Node | Route Changes | Link Changes
+#    0 |             0 |            0
+#    1 |             0 |            0
+#    2 |             0 |            0
+#    3 |             0 |            0
+#    4 |             0 |            0
+#
+
+# Creating the Access Point (AP)..
+$node_(15) set X_ 350
+$node_(15) set Y_ 230
+
+# Setting initial positions of the nodes; i.e. displaying them on nam
+for {set i 0} {$i < 6} {incr i} {
+	set index [expr {15 + $i}]
+	$ns_ initial_node_pos $node_($index) 20
+}
+
+# Creating a sink at the AP and connecting all nodes to the AP
+set sink_(15) [new Agent/TCPSink]
+$ns_ attach-agent $node_(15) $sink
+
+for {set i 1} {$i < 6} {incr i} {
+	set index [expr {15 + $i}]
+	set tcp_($index) [new Agent/TCP]
+	$ns_ attach-agent $node_($index) $tcp_($index)
+	$ns_ connect $tcp_($index) $sink_(15)
+	set ftp_($index) [new Application/FTP]
+	$ftp_($index) attach-agent $tcp_($index)
+	$ns_ at 0.0 "$tcp_($index) start"
+}
