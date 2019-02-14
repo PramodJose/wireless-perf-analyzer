@@ -8,8 +8,8 @@ set val(ll)				LL
 set val(ant)			Antenna/OmniAntenna
 set val(rp)				DSDV
 
-set val(simtime)		180.0
-set val(buff_time)		5.0
+set val(simtime)		30.0
+set val(buff_time)		0.1
 set val(sidex)			200
 set val(sidey)			200
 set val(area_nn)		11
@@ -68,6 +68,8 @@ for {set r 0} {$r < $val(row)} {incr r} {
 		 	 -y $val(sidey) -p 0 -M 20 -t $val(simtime) -d $file_name -X $basex -Y $basey -i $node_index
 
 		source $file_name
+
+		file delete $file_name
 	}
 }
 
