@@ -3,8 +3,8 @@ if {$argc != 2} {
 	exit 0
 }
 
-set val(max_row)			3.0		;# Do not make this an integer. It'll cause...
-set val(max_col)			5.0		;# problems while calculating val(cols) on line 34
+set val(max_row)			3
+set val(max_col)			5
 set val(AP_count)			[lindex $argv 0]
 set val(outfile)			[lindex $argv 1]
 
@@ -31,7 +31,7 @@ set val(buff_time)			0.01
 set val(sidex)				25
 set val(sidey)				25
 
-set val(cols)				[expr {int(ceil($val(AP_count) / $val(max_row)))}]
+set val(cols)				[expr {int(ceil(double($val(AP_count)) / $val(max_row)))}]
 if {$val(AP_count) < $val(max_row)} {
 	set val(rows) $val(AP_count)
 } else {
@@ -80,25 +80,44 @@ $ns_ node-config	-adhocRouting $val(rp) \
 					-movementTrace OFF
 
 
-set namtrace_fh [open "$argv0.nam" w]
-$ns_ namtrace-all-wireless $namtrace_fh $val(maxx) $val(maxy)
+# set namtrace_fh [open "$argv0.nam" w]
+# $ns_ namtrace-all-wireless $namtrace_fh $val(maxx) $val(maxy)
 set trace_fh [open "$argv0.tr" w]
 $ns_ trace-all $trace_fh
 set outfile_fh [open $val(outfile) w]
 
-proc count_bytes {} {
 
+proc count_bytes {} {
+	global sink_ val netSizes outfile_fh
+	set bytes_received 0
+	set netSizesPos 0
+	set next_AP_index 0
+
+	for {set i 0} {$i < $val(nn)} {incr i} {
+		if {$i == $next_AP_index} {
+			incr netSizesPos
+			set next_AP_index [expr {$next_AP_index + $netSizes($netSizesPos)}]
+		} else {
+			set bytes_received [expr {$bytes_received + [$sink_($i) set bytes_]}]
+		}
+	}
+
+	set avg_bytes_received [expr {double($bytes_received) / $val(AP_count)}]
+
+	puts $outfile_fh $avg_bytes_received
 }
+
 
 proc finish {} {
-	global ns_ trace_fh argv0 outfile_fh namtrace_fh
+	global ns_ trace_fh argv0 outfile_fh;# namtrace_fh
 	$ns_ flush-trace
-	close $namtrace_fh
+	# close $namtrace_fh
 	close $trace_fh
 	close $outfile_fh
-	exec nam "$argv0.nam" &
+	# exec nam "$argv0.nam" &
 	exit 0
 }
+
 
 set effectivex	[expr {$val(sidex) - $val(overlap)}]
 set effectivey	[expr {$val(sidey) - $val(overlap)}]
@@ -128,6 +147,7 @@ for {set c 0} {$c < $val(cols)} {incr c} {
 		incr ap
 	}
 }
+
 
 $ns_ at $val(simtime) "count_bytes"
 $ns_ at [expr {$val(simtime) + $val(buff_time)}] "finish"

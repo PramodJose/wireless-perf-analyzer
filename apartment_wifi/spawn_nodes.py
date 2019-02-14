@@ -167,7 +167,7 @@ if __name__ == "__main__":
     out_fh.write("\n# Setting initial positions of the nodes; i.e. displaying them on nam\n")
     out_fh.write("for {set i 0} {$i < " + str(options.num_nodes) + "} {incr i} {\n")
     out_fh.write("\tset index [expr {" + AP_index + " + $i}]\n")
-    out_fh.write("\t$ns_ initial_node_pos $node_($index) 20\n}\n")
+    out_fh.write("\t$ns_ initial_node_pos $node_($index) 5\n}\n")
 
     out_fh.write("\n# Creating Loss Monitor sinks at the AP and connecting all nodes to the AP\n")
 
