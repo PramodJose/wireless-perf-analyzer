@@ -7,7 +7,10 @@ scen-1500x300-51-900-0-20
 scen-1500x300-51-900-0-20_2
 simple_wifi/.rand_state
 simple_wifi/plot
+simple_wifi/simple_wifi.tcl.tr
 spawn_nodes_bak.py
 test.tcl
 test_process_god.py
 test_process_node.py
+apartment_wifi/plot
+apartment_wifi/apartment_wifi.tcl.tr
