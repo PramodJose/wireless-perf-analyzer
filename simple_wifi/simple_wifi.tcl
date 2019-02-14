@@ -14,7 +14,7 @@ set val(ant)			Antenna/OmniAntenna
 set val(rp)				DSDV
 
 set val(simtime)		20.0
-set val(buff_time)		0.1
+set val(buff_time)		0.0
 set val(sidex)			200
 set val(sidey)			200
 set val(area_nn)		[lindex $argv 0]
