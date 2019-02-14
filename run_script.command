@@ -1,1 +1,1 @@
-python3 spawn_nodes.py -n 6 -x 400 -y 300 -p 0 -M 20 -t 60 -d 400x300-6-60-0-20 -X 150 -Y 80 -i 15
+python3 spawn_nodes.py -n 6 -x 400 -y 300 -p 0 -M 20 -t 60 -d here -X 150 -Y 80 -i 15
