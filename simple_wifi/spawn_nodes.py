@@ -162,7 +162,8 @@ if __name__ == "__main__":
     out_fh.write("$node_(" + AP_index + ") set X_ " + str(center_x) + "\n")
     out_fh.write("$node_(" + AP_index + ") set Y_ " + str(center_y) + "\n")
     out_fh.write("$node_(" + AP_index + ") set Z_ 0.0\n")
-
+    out_fh.write("$node_(" + AP_index + ") color Red\n")
+    out_fh.write("$ns_ at 0.0 \"$node_(" + AP_index + ") color Red\"\n")
 
     out_fh.write("\n# Setting initial positions of the nodes; i.e. displaying them on nam\n")
     out_fh.write("for {set i 0} {$i < " + str(options.num_nodes) + "} {incr i} {\n")
