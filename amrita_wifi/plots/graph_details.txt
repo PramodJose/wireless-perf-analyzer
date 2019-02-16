@@ -1,0 +1,10 @@
+Throughput graph:
+
+Amrita Wi-Fi: Average throughput for varying number of Access Points (1-50) each for 20 runs.
+X-Axis: Number of Access Points (APs)
+Y-Axis: Average throughput (bytes/second)
+
+Delay graph:
+Amrita Wi-Fi: Average delay for varying number of Access Points (1-50) each for 20 runs.
+X-Axis: Number of Access Points (APs)
+Y-Axis: Average delay (seconds)
