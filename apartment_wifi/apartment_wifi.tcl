@@ -12,7 +12,7 @@ if {$val(AP_count) > [expr {$val(max_row) * $val(max_col)}]} {
 	puts "No support for these many APs. Consider increasing max_row and/or max_col."
 	exit 0
 } elseif {$val(AP_count) < 1} {
-	puts "Number os APs should be at least 1"
+	puts "Number of APs should be at least 1"
 	exit 0
 }
 
