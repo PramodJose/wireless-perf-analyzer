@@ -1,5 +1,5 @@
 if {$argc != 2} {
-	puts "Usage:-\n\tns simple_wifi.tcl <number-of-nodes> <output-file>"
+	puts "Usage:-\n\tns $argv0 <number-of-nodes> <output-file>"
 	exit 0
 }
 
