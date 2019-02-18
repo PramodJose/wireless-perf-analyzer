@@ -64,6 +64,16 @@ if __name__ == "__main__":
     out_thr_fh = open(results_thr, "w")
     out_del_fh = open(results_delay, "w")
 
+    out_thr_fh.write("thickness = 2.0\n")
+    out_thr_fh.write("title = Amrita Wi-Fi: Average throughput for varying number of Access Points (1-50) each for 20 runs\n")
+    out_thr_fh.write("title_x = Number of Access Points (APs)\n")
+    out_thr_fh.write("title_y = Average throughput (bytes/second)\n\n")
+
+    out_del_fh.write("thickness = 2.0\n")
+    out_del_fh.write("title = Amrita Wi-Fi: Average delay for varying number of Access Points (1-50) each for 20 runs\n")
+    out_del_fh.write("title_x = Number of Access Points (APs)\n")
+    out_del_fh.write("title_y = Average delay (seconds)\n\n")
+
     for i in range(min_aps, max_aps + 1):
         print("Working on AP count", i)
         throughput = 0
