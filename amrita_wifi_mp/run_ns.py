@@ -1,5 +1,8 @@
-import os
+from os import system, remove
+from time import time
 from multiprocessing import Pool
+from datetime import timedelta
+
 tcl_script = "amrita_wifi_mp.tcl"
 
 
@@ -33,24 +36,25 @@ def calc_delay(file_name):
                 sent_time[flow_id] = -1
 
     avg_delay /= pkts_recvd
-    os.remove(file_name)
+    remove(file_name)
     return avg_delay
 
 
 def simulation_instance(command):
-    os.system(command)
+    system(command)
 
     file_name = command.split()[3]
     in_fh = open(file_name, "r")
     throughput = float(in_fh.readline())
     in_fh.close()
-    os.remove(file_name)
+    remove(file_name)
     delay = calc_delay(file_name + ".tr")
 
     return throughput, delay
 
 
 if __name__ == "__main__":
+    start_time = time()
     min_aps = 1
     max_aps = 50
     run_count = 20
@@ -87,5 +91,6 @@ if __name__ == "__main__":
     out_thr_fh.close()
     out_del_fh.close()
 
-    print("The throughput graph is " + results_thr)
-    print("..and the avg delay graph is " + results_delay)
+    print(f"\nThroughput graph :\t{results_thr}")
+    print(f"Avg delay graph : \t{results_delay}")
+    print(f"Execution time :\t{timedelta(seconds=time() - start_time)}")
