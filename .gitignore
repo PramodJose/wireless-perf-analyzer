@@ -14,3 +14,4 @@ test_process_god.py
 test_process_node.py
 apartment_wifi/plot
 apartment_wifi/apartment_wifi.tcl.tr
+.idea/
