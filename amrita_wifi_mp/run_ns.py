@@ -59,7 +59,7 @@ if __name__ == "__main__":
     max_aps = 50
     run_count = 20
     outfile = "avg_byte_count"
-    results_thr = "plot_throughout"
+    results_thr = "plot_throughput"
     results_delay = "plot_delay"
     out_thr_fh = open(results_thr, "w")
     out_del_fh = open(results_delay, "w")
